@@ -31,6 +31,7 @@ function adminer_object() {
 		new AdminerEnumOption,
 		new AdminerTablesFilter,
 		new AdminerEditForeign,
+        new CBH
 	);
 
 	/* It is possible to combine customization and plugins:

@@ -1,0 +1,16 @@
+{
+  "diter": {
+    "user_has_container": {
+      "userId": {
+        "table": "diter.users",
+        "id": "id",
+        "text": "email"
+      },
+      "containerId": {
+        "table": "diter.containers",
+        "id": "id",
+        "text": "domain"
+      }
+    }
+  }
+}

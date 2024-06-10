@@ -1,0 +1,10 @@
+{
+    "SELECT": {
+        "appliance": {
+            "accountId": {
+                "table": "account",
+                "id": "id"
+            }
+        }
+    }
+}

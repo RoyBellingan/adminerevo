@@ -1,7 +1,8 @@
 <?php
 $connection = '';
+//please fix this orror
 
-$has_token = $_SESSION["token"];
+$has_token = isset($_SESSION["token"]);
 if (!$has_token) {
 	$_SESSION["token"] = rand(1, 1e6); // defense against cross-site request forgery
 }
