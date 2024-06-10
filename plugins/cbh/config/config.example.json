@@ -4,7 +4,7 @@
             "COLUMN1": { //this will create a link, like what happens with a foreign key
                 "db" : "ANY_DB",                 //if the db is omitted, the current one will be used
                 "table": "ANY_TABLE_OR_VIEW",
-                "id": "id"
+                "column": "id"
             },
             "COLUMN4": { //this will rewrite the cell content using a custom function (defined in the DB_NAME.function.js file)
                 "rewrite": "imageEmbed1"
@@ -21,7 +21,7 @@
                 "dropdown" : true,
                 //if the db is omitted, the current one will be used
                 "table": "ANY_TABLE_OR_VIEW",
-                "id": "id",
+                "column": "id",
                 "text": "name",
                 "where": "AND destinationId IS NOT NULL" //you can optionall define the where condition to prefilter
             }

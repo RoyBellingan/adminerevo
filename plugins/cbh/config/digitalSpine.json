@@ -3,7 +3,7 @@
         "appliance": {
             "accountId": {
                 "table": "account",
-                "id": "id"
+                "column": "id"
             }
         }
     }
