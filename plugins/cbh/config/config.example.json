@@ -22,7 +22,7 @@
                 //if the db is omitted, the current one will be used
                 "table": "ANY_TABLE_OR_VIEW",
                 "column": "id",
-                "text": "name",
+                "dropdwonSource": "name",
                 "where": "AND destinationId IS NOT NULL" //you can optionall define the where condition to prefilter
             }
         }

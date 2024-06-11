@@ -15,6 +15,33 @@ if($_GET["format"] == "json"){
         json_encode($row);
         exit;
     }
+} elseif($_GET["format"] == "select2"){
+    //header("Content-Type: application/json");
+
+    $db = $_GET["db"];
+	$table = $_GET["table"];
+    $id = $_GET["id"] ?? "id"; 
+    $text = $_GET["text"] ?? "name";
+    $where = '';
+    if($_GET["q"]){
+        $q = $_GET["q"];
+        $where = " WHERE $text LIKE '$q' ";
+    }
+
+    $sql = "SELECT {$id} as id, {$text} as text FROM $db.$table $where";
+    //echo $sql;
+    $result = $connection->query($sql);
+
+    $json = [];
+    $pos = 0;
+    while($row = $result->fetch_object()){
+        $json["results"][$pos]["id"] = $row->id;
+        $json["results"][$pos]["text"] = "{$row->id} - {$row->text}";
+        $pos++;
+    }
+
+    echo json_encode($json);
+
 }else{
     $TABLE = $_GET["download"];
     $fields = fields($TABLE);

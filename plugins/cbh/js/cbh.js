@@ -8,16 +8,7 @@ class CBH {
         $(document).ready(function () {
             //We could inject this from the php ? or is better to load directly from the json file?
             const fetchData = () => fetch("../plugins/cbh/config/" + cbhConf.dbName + ".json").then(res => res.json()).then(res => {
-                switch (cbhConf.mode) {
-                    case "SELECT":
-                        cbh.selectMode(res);
-                        return;
-
-                    case "EDIT":
-                        cbh.editMode(res);
-                        return;
-                }
-
+                cbh.handler(res);
             });
             fetchData();
 
@@ -48,17 +39,6 @@ class CBH {
         return true;
     }
 
-    skipMe4Select(rewriteRule) {
-        let skipMe = ['dropdown', 'readonly'];
-        for (let i = 0; i < skipMe.length; i++) {
-            // Check if the current entity is present in the arrayToSearch
-            if (rewriteRule.hasOwnProperty(skipMe[i])) {
-                return true; // Return true if a match is found
-            }
-        }
-        return false;
-    }
-
     constructNewUrl(targetTable, filterColumn, filterValue) {
         // Parse the initial URL
         let url = new URL(window.location.href);
@@ -80,28 +60,16 @@ class CBH {
         return newUrl;
     }
 
-
-    selectMode(jsonData) {
-        this.currentDatabase = cbhConf.dbName;
-        this.currentTable = cbhConf.table;
-
-        //check if exists something for the SELECT stage
-        if (!jsonData["SELECT"]) {
-            return;
-        }
-
-        if (!jsonData["SELECT"][this.currentTable]) {
-            return;
-        }
-        const tableRewrite = jsonData["SELECT"][this.currentTable];
-
-        if (!cbh.extractKeyVsId()) {
-            return;
-        }
-
+    selectMode(tableRewrite) {
+        //This section could (should) be done in PHP. But I have no idea how.
         let tableRows = document.querySelectorAll('#table > tbody > tr');
         if (!(tableRows.length > 1)) {
             return false;
+        }
+
+
+        if (!cbh.extractKeyVsId()) {
+            return;
         }
 
         tableRows.forEach((tr) => {
@@ -112,9 +80,7 @@ class CBH {
                     continue;
                 }
                 let rewriteRule = tableRewrite[key];
-                if (this.skipMe4Select(rewriteRule)) {
-                    continue;
-                }
+
                 //there is a ghost column at the beginning
                 let td = tds[this.keyVsId[key] + 1];
                 //if the rewrite element is present
@@ -130,7 +96,97 @@ class CBH {
             }
 
         });
+    }
 
+    dropdownMode(tableRewrite) {
+        let tableRows = document.querySelectorAll('#form > table > tbody > tr');
+        if (!(tableRows.length > 1)) {
+            return false;
+        }
+        //first is a TH with the column name, FIRST TD is the operator, second TD is the value
+        tableRows.forEach((tr) => {
+            let key = tr.querySelectorAll('th')[0].innerText;
+            
+            if (!tableRewrite[key]) {
+                return;
+            }
+            let rewriteRule = tableRewrite[key];
+            if (!rewriteRule["dropdown"]) {
+                return;
+            }
+            let tds = tr.querySelectorAll('td');
+            let td = tds[1];
+            let old = td.children[0];
+            let oldValue = old.innerText; 
+
+            let neu = document.createElement("select");
+            $(neu).attr('name', old.getAttribute('name'));
+            neu.style = "width:100%";
+            $(neu).append($('<option selected="selected"> ').attr('value',old.value).text(old.value));
+            //set the current value as as the default selection
+            while (td.firstChild) {
+                td.removeChild(td.firstChild);
+            }
+            td.appendChild(neu);
+
+            let url = new URL(window.location.href);
+    
+            // Extract base URL and query parameters from initial URL
+            let baseUrl = url.origin + url.pathname;
+            let original = new URLSearchParams(url.search);
+            let searchParams = new URLSearchParams();
+
+            // Construct new query parameters
+            searchParams.set('server', original.get('server'));
+            searchParams.set('username', original.get('username'));
+
+            searchParams.set('db', cbhConf.dbName);
+            searchParams.set('table', rewriteRule.table);
+            searchParams.set('download', '1');
+            searchParams.set('format', "select2");
+    
+            // Construct the new URL
+            let newUrl = baseUrl + '?' + searchParams.toString();
+
+            //deep copy the ingredientsList
+            const param = JSON.parse(JSON.stringify(rewriteRule["dropdown"]));
+            
+            $(neu).select2({
+                ajax: {
+                    delay: 400,
+                    url: newUrl,
+                    dataType: 'json',
+                    data: function (params) {
+			            param.q = params.term;
+                        return param;
+                    }
+
+                }
+            });
+            
+
+        });
+    }
+
+
+    handler(jsonData) {
+        this.currentDatabase = cbhConf.dbName;
+        this.currentTable = cbhConf.table;
+
+        if (!jsonData[this.currentTable]) {
+            return;
+        }
+        const tableRewrite = jsonData[this.currentTable];
+
+        //do we have something to do for this mode ?
+        switch (cbhConf.mode) {
+            case 'SELECT':
+                this.selectMode(tableRewrite);
+                break;
+            case 'EDIT':
+                this.dropdownMode(tableRewrite);
+                break;
+        }
     }
 }
 

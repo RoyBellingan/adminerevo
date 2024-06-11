@@ -1,6 +1,7 @@
 <?php
 
-function getSelectedTable() {
+function getSelectedTable()
+{
     return isset($_GET["select"]) ? $_GET["select"] : null;
 }
 
@@ -26,7 +27,8 @@ class CBH
     function head()
     {
         $dbName = adminer()->database();
-        $table = getSelectedTable();
+        //When in edit (insert) mode this function does no return nothing so we need to get the table name from the URL !
+        $table = $this->getTable();
         $mode = $this->getCurrentPage();
         if (!strlen($dbName) || !$table) {
             //if no db is selected, do not load the plugin
@@ -80,15 +82,26 @@ if (typeof jQuery == 'undefined') {
 EOD;
     }
 
-    function getCurrentPage() {
+    function getCurrentPage()
+    {
         // Check for various URL parameters to determine the current page context
-        if (isset($_GET['select'])) {
-            return 'SELECT';
-        } elseif (isset($_GET['edit'])) {
+        if ( isset($_REQUEST['edit']) || isset($_REQUEST['clone'])) {
+            //for *REASON* the clone command is passed as a POST... (and select is used too...)
             return 'EDIT';
+        }elseif (isset($_REQUEST['select'])) {
+            return 'SELECT';
         } else {
             return 'OTHER';
         }
     }
 
+    function getTable()
+    {
+        //When in edit (insert) mode this function does no return nothing so we need to get the table name from the URL !
+        $table = getSelectedTable();
+        if (!$table) {
+            @$table = $_GET["edit"];
+        }
+        return $table;
+    }
 }

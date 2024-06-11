@@ -1,10 +1,62 @@
 {
-    "SELECT": {
-        "appliance": {
-            "accountId": {
-                "table": "account",
-                "column": "id"
+    "accountHasAppliace": {
+        "accountId": {
+            "table": "account",
+            "column": "id",
+            "link": true,
+            "dropdown": {
+                
             }
+        },
+        "applianceId": {
+            "table": "appliance",
+            "column": "id"
+
+        }
+    },
+    "appliance": {
+        "accountId": {
+            "table": "account",
+            "column": "id",
+            "dropdown": {
+                "id": "id"
+            }
+        }
+    },
+    "batteryInfo": {
+        "applianceId": {
+            "table": "appliance",
+            "column": "id"
+        }
+    },
+    "batteryReading": {
+        "applianceId": {
+            "table": "appliance",
+            "column": "id"
+        }
+    },
+    "EVReading": {
+        "applianceId": {
+            "table": "appliance",
+            "column": "id"
+        }
+    },
+    "generatorInfo": {
+        "applianceId": {
+            "table": "appliance",
+            "column": "id"
+        }
+    },
+    "heatingInfo": {
+        "applianceId": {
+            "table": "appliance",
+            "column": "id"
+        }
+    },
+    "reading": {
+        "applianceId": {
+            "table": "appliance",
+            "column": "id"
         }
     }
 }
