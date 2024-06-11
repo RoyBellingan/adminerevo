@@ -25,7 +25,7 @@ if($_GET["format"] == "json"){
     $where = '';
     if($_GET["q"]){
         $q = $_GET["q"];
-        $where = " WHERE $text LIKE '$q' ";
+        $where = " WHERE $id = '$q' OR $text LIKE '$q' ";
     }
 
     $sql = "SELECT {$id} as id, {$text} as text FROM $db.$table $where";

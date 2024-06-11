@@ -26,7 +26,10 @@
     "batteryInfo": {
         "applianceId": {
             "table": "appliance",
-            "column": "id"
+            "column": "id",
+            "dropdown": {
+                "text" : "SFORMAT('{} {}', type, notes)"
+            }
         }
     },
     "batteryReading": {
@@ -44,19 +47,28 @@
     "generatorInfo": {
         "applianceId": {
             "table": "appliance",
-            "column": "id"
+            "column": "id",
+            "dropdown": {
+                "text" : "SFORMAT('{} {}', type, notes)"
+            }
         }
     },
     "heatingInfo": {
         "applianceId": {
             "table": "appliance",
-            "column": "id"
+            "column": "id",
+            "dropdown": {
+                "text" : "SFORMAT('{} {}', type, notes)"
+            }
         }
     },
     "reading": {
         "applianceId": {
             "table": "appliance",
-            "column": "id"
+            "column": "id",
+            "dropdown": {
+                "text" : "SFORMAT('{} {}', type, notes)"
+            }
         }
     }
 }

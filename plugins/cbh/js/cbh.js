@@ -63,7 +63,7 @@ class CBH {
     selectMode(tableRewrite) {
         //This section could (should) be done in PHP. But I have no idea how.
         let tableRows = document.querySelectorAll('#table > tbody > tr');
-        if (!(tableRows.length > 1)) {
+        if (tableRows.length < 1) {
             return false;
         }
 
@@ -149,7 +149,10 @@ class CBH {
             let newUrl = baseUrl + '?' + searchParams.toString();
 
             //deep copy the ingredientsList
-            const param = JSON.parse(JSON.stringify(rewriteRule["dropdown"]));
+            let param = JSON.parse(JSON.stringify(rewriteRule["dropdown"]));
+            if(param === true){ //to allow a simple dropdown definition in the config
+                param = {};
+            }
             
             $(neu).select2({
                 ajax: {
