@@ -9,6 +9,8 @@ if (preg_match('~MyISAM|M?aria' . (min_version(5.7, '10.2.2') ? '|InnoDB' : '') 
 	$index_types[] = "SPATIAL";
 }
 $indexes = indexes($TABLE);
+
+
 $primary = array();
 if ($jush == "mongo") { // doesn't support primary key
 	$primary = $indexes["_id_"];
@@ -30,7 +32,7 @@ if ($_POST && !$error && !$_POST["add"] && !$_POST["drop_col"]) {
 			foreach ($index["columns"] as $key => $column) {
 				if ($column != "") {
 					$length = $index["lengths"][$key];
-					$desc = $index["descs"][$key];
+					$desc = isset($index["descs"][$key]) ? $index["descs"][$key] : null;
 					$set[] = idf_escape($column) . ($length ? "(" . (+$length) . ")" : "") . ($desc ? " DESC" : "");
 					$columns[] = $column;
 					$lengths[] = ($length ? $length : null);
@@ -44,11 +46,13 @@ if ($_POST && !$error && !$_POST["add"] && !$_POST["drop_col"]) {
 					ksort($existing["columns"]);
 					ksort($existing["lengths"]);
 					ksort($existing["descs"]);
-					if ($index["type"] == $existing["type"]
-						&& array_values($existing["columns"]) === $columns
-						&& (!$existing["lengths"] || array_values($existing["lengths"]) === $lengths)
-						&& array_values($existing["descs"]) === $descs
-					) {
+					
+					$type = $index["type"] == $existing["type"];
+					$col = array_values($existing["columns"]) === $columns;
+					$len = array_values($existing["lengths"]) === $lengths;
+					$desc = array_values($existing["descs"]) == $descs;
+
+					if ($type && $col && $len && $desc) {						
 						// skip existing index
 						unset($indexes[$name]);
 						continue;
@@ -126,8 +130,16 @@ foreach ($row["indexes"] as $index) {
 				$column,
 				"partial(" . ($i == count($index["columns"]) ? "indexesAddColumn" : "indexesChangeColumn") . ", '" . js_escape($jush == "sql" ? "" : $_GET["indexes"] . "_") . "')"
 			);
-			echo ($jush == "sql" || $jush == "mssql" ? "<input type='number' name='indexes[$j][lengths][$i]' class='size' value='" . h($index["lengths"][$key]) . "' title='" . lang('Length') . "'>" : "");
-			echo (support("descidx") ? checkbox("indexes[$j][descs][$i]", 1, $index["descs"][$key], lang('descending')) : "");
+			$ilk = "";
+			if(isset($index["lengths"][$key])){
+				$ilk = h($index["lengths"][$key]);
+			}
+			echo ($jush == "sql" || $jush == "mssql" ? "<input type='number' name='indexes[$j][lengths][$i]' class='size' value='" . $ilk . "' title='" . lang('Length') . "'>" : "");
+			$idk = "";
+			if(isset($index["descs"][$key])){
+				$idk = $index["descs"][$key];
+			}
+			echo (support("descidx") ? checkbox("indexes[$j][descs][$i]", 1, $idk, lang('descending')) : "");
 			echo " </span>";
 			$i++;
 		}

@@ -70,5 +70,14 @@
                 "text" : "SFORMAT('{} {}', type, notes)"
             }
         }
+    },
+    "dummyLoadInfo":{
+        "applianceId": {
+            "table": "appliance",
+            "column": "id",
+            "dropdown": {
+                "text" : "SFORMAT('{} {}', type, notes)"
+            }
+        }
     }
 }
